@@ -9,7 +9,7 @@ The subsection of the project include:
 - util:   Utility functions do handle data frames, file input / output, etc.  
 - pivot:  Flexible caluclation of statistical tables 
 - graph:  Generation of statistical graphs
-- stats:  Inferential statitical routines, such as ANOVA, ttest 
+- stats:  Inferential statistical routines, such as ANOVA, ttest 
 - circ:   Analysis of circular data 
 - kinematics: Analysis of movement data 
 

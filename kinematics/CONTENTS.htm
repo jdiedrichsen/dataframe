@@ -1,0 +1,14 @@
+% Basic functions for the analysis of kinematic data 
+% Joern Diedrichsen 
+% V.1.0 09/13/05 (jdiedric@jhu.edu)
+% -----------------------------------------------------------------
+<tr><td class="content_subheader" colspan="3">1. Calculating numerical derivatives and smoothing </td></tr>
+<tr><td></td><td>  velocity_discr</td><td> Numerical first derivative (with filter option)</td></tr>
+<tr><td></td><td>  acceleration_discr</td><td> Numerical second derivative (with filter option)</td></tr>
+<tr><td></td><td>  tangvelocity</td><td> Tangential and vector velocity</td></tr>
+<tr><td></td><td>  smooth_kernel</td><td> Gaussian kernel smoothing (1-dim)</td></tr>
+<tr><td class="content_subheader" colspan="3">2. Landmarking, cutting and stretching </td></tr>
+<tr><td></td><td>  findstart</td><td> Finds start of movement, excludes false starts</td></tr>
+<tr><td></td><td>  findend</td><td> Finds end of movement, including/excluding submovement </td></tr>
+<tr><td></td><td>  cut</td><td> Cuts out a kinematic trajectory for placement in matrix </td></tr>
+<tr><td></td><td>  lengthstandard</td><td> Stretches kinematic data to a certain length</td></tr>

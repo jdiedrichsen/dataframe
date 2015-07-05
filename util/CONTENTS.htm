@@ -1,0 +1,30 @@
+% Utility toolbox
+% Contains function for basic data manipulations in data structures 
+% and other utility functions
+% Version 2.0 29/08/07
+% Joern Diedrichsen (jdiedric@jhu.edu)
+% --------------------------------------------------------------
+<tr><td class="content_subheader" colspan="3">1. Data Structure functions </td></tr>
+<tr><td></td><td> dload</td><td> Loads data file into data structure (field or variable names are given my first row)</td></tr>
+<tr><td></td><td> dsave</td><td> Save a data structure as a data file with headers (ASCII) </td></tr>
+<tr><td></td><td> dprint</td><td> Prints data structure on screen </td></tr>
+<tr><td></td><td> dshuffel</td><td> Randomizes the rows of a data structure</td></tr>
+<tr><td></td><td> addstruct</td><td> Adds a data structure to another - field by field</td></tr>
+<tr><td></td><td> getrow</td><td> Returns rows x from a data structure </td></tr>
+<tr><td></td><td> setrow</td><td> Sets rows x in a data structure</td></tr>
+<tr><td></td><td> insertrow</td><td> Insert row(s) at position x into a data structure</td></tr>
+<tr><td></td><td> field_matrix2vector</td><td> Changes a matrix into fields of column vectors, called var1,var2,...</td></tr>
+<tr><td></td><td> field_vector2matrix</td><td> Changes vectors var1,var,... back into matrix var</td></tr>
+<tr><td class="content_subheader" colspan="3">2. Other Data manipulations </td></tr>
+<tr><td></td><td> findrow</td><td> Finds a row of certain values in a Matrix</td></tr>
+<tr><td></td><td> findIdx</td><td> Finds indices based on several criteria combined by and/or</td></tr>
+<tr><td></td><td> minmax</td><td> Finds absolute minimum/maximum</td></tr>
+<tr><td></td><td> nancount</td><td> Returns number of nans in a vector</td></tr>
+<tr><td></td><td> fisherz</td><td> Fisher-z transformation of correlation</td></tr>
+<tr><td></td><td> fisherinv</td><td> Inverse of fisher-z</td></tr>
+<tr><td></td><td> split_data</td><td> Splits ordinal data into p categories </td></tr>
+<tr><td class="content_subheader" colspan="3">3. Input/output functions</td></tr>
+<tr><td></td><td> get_response</td><td> Waits for a user-key press</td></tr>
+<tr><td></td><td> vararginoptions</td><td> Deals with argument lists passed to functions </td></tr>
+<tr><td></td><td> fcneval</td><td> Evaluates a function argument with eval or feval</td></tr>
+<tr><td></td><td> struct2list</td><td> Makes a structure into a argument list </td></tr>

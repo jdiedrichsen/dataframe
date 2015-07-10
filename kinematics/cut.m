@@ -1,10 +1,10 @@
 function y=cut(X,pre,at,post,varargin);
 % function y=cut(X,pre,at,post,varargin);
-%   at: at which frame will be cut 
-%   pre: how many frames before 
-%   post: How many frames after 
+%   at: at which frame will be cut
+%   pre: how many frames before
+%   post: How many frames after
 %  varargin:
-%   'padding': padding when time that is not available 
+%   'padding': padding when time that is not available
 %         'nan': pad with nans
 %         'zero': pad with zero
 %         'last': pad with first or last entry (DEFAULT)
@@ -31,16 +31,20 @@ if (isempty(at))
 end;
 if (isnan(at))
     y=ones(pre+post+1,cols)*NaN;
-else 
+else
     y0=X(max(1,at-pre):min(at+post,rows),:);
-    switch (padding)
-        case 'nan'
-            y=[ones(1-at+pre,cols).*NaN;y0;ones(at+post-length(X),cols).*NaN];
-        case 'last'
-            y=[ones(1-at+pre,cols).*repmat(y0(1,:),1-at+pre,1);y0;ones(at+post-rows,cols).*repmat(y0(end,:),at+post-rows,1)];
-        case 'zero'
-            y=[zeros(1-at+pre,cols);y0;zeros(at+post-length(X),cols)];
-        otherwise
-            error('padding:unknown option - use: nan, last, zero');
+    if (isempty(y0))
+        y=nan(pre+post+1,cols);
+    else
+        switch (padding)
+            case 'nan'
+                y=[nan(1-at+pre,cols);y0;nan(at+post-length(X),cols)];
+            case 'last'
+                y=[ones(1-at+pre,cols).*repmat(y0(1,:),1-at+pre,1);y0;ones(at+post-rows,cols).*repmat(y0(end,:),at+post-rows,1)];
+            case 'zero'
+                y=[zeros(1-at+pre,cols);y0;zeros(at+post-length(X),cols)];
+            otherwise
+                error('padding:unknown option - use: nan, last, zero');
+        end;
     end;
 end;

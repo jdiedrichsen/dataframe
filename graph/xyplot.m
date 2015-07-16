@@ -268,7 +268,7 @@ for c=1:numsplitcat
             errorbars(X(c,:)',Y(c,:)',Xerr(c,:)','linecolor',fm.errorcolor,'linewidth',fm.errorwidth,'orientation','horz','error_dir','both');
         case 'ellipse' 
             for n=1:length(X(c,:)')
-                if (~isnan(Xerr(c,n))) % If observations present 
+                if (~isnan(Xerr(c,n))&~isnan(Yerr(c,n))&~isnan(XYerr(c,n))) % If observations present
                 COVM=[Xerr(c,n).^2 XYerr(c,n)*Xerr(c,n)*Yerr(c,n);XYerr(c,n)*Xerr(c,n)*Yerr(c,n) Yerr(c,n).^2];  
                 [v,d]=eig(COVM);
                 v1=v(:,1);v2=v(:,2);

@@ -1,4 +1,4 @@
-function r=mycorr(X)
+function [r,rlo,rup]=mycorr(X)
 % correlation coefficient 
 % function r=corr(X)
 % X is a 2-column data vector
@@ -8,9 +8,11 @@ i=find(~isnan(X(:,1)) & ~isnan(X(:,2)));
 if size(i,1)<3
     r=NaN;
 else
-    A=corrcoef(X(i,:));  
+    [A,P,RL,RU]=corrcoef(X(i,:));  
     if (~isnan(A))
         r=A(2,1);
+        rlo=RL(2,1);
+        rup=RU(2,1);
     else 
         r=NaN;
     end;

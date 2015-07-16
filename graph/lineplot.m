@@ -25,42 +25,46 @@ function [x_coord,PLOT,ERROR]=lineplot(xvar,y,varargin)
 %       'errorwidth',width   : Width of error bars
 %       'CAT', CAT           : Structure of formating options 
 %   Other options 
-%       'leg'         : Legend, either cell with names or 'auto'
-%       'leglocation','north' : Legend location
-%       'gap'           : For multiple x-categories, it determines the
-%                         extra spacing of each category. Gap [1 0.5] means
-%                         that the gap introduced by the 2nd x-variable
-%                         (lower category) is 0.5, and a split in the
-%                         1st x-variable (higher category) introduces a gap
-%                         gap of 1. 
-%       'xcat',xlabel:  Displays x-label to differentiate multiple X-categories plotted
-%                           if xlabel={}, only category values are plotted 
-%                           if xlabel={'label1','label2'}, text labels are used.  
+%       'leg'                : Legend, either cell with names or 'auto'
+%       'leglocation','north': Legend location
+%       'gap'                : For multiple x-categories, it determines the
+%                              extra spacing of each category. Gap [1 0.5] means
+%                              that the gap introduced by the 2nd x-variable
+%                              (lower category) is 0.5, and a split in the
+%                              1st x-variable (higher category) introduces a gap
+%                              gap of 1. 
+%       'xcat',xlabel        : Displays x-label to differentiate multiple X-categories plotted
+%                              if xlabel={}, only category values are plotted 
+%                              if xlabel={'label1','label2'}, text labels are used.  
 %    Predetermined styles
-%       'style_symbols4*2': Square, circle,Triangle (up/down), in white and
-%                     black
-%       'style_thickline':  Thick lines in different colors, square symbols, and error
-%                     bars,different colors
-%       'style_thickline2x3: Dashed / nodashed in 3 different colors 
-%       'style_shade': line with shades
+%       'style_symbols4*2'   : Square, circle,Triangle (up/down), in white and
+%                              black
+%       'style_thickline'    : Thick lines in different colors, square symbols, and error
+%                              bars,different colors
+%       'style_thickline2x3  : Dashed / nodashed in 3 different colors 
+%       'style_shade'        : line with shades
 %   Data processing options
-%       'plotfcn'   : function over data of what should be plotted: default 'mean'
-%       'errorfcn'  : function over data to determine size of error bars: default 'stderr'
-%                     if just one error function is given, we assume
-%                     symmetric error bars
-%       'errorfcn_up': If given, error bars can be asymmetric
+%       'plotfcn'      : function over data of what should be plotted: default 'mean'
+%       'errorfcn'     : function over data to determine size of error bars: default 'stderr'
+%                        if just one error function is given, we assume
+%                        symmetric error bars
+%       'errorfcn_up'  : If given, error bars can be asymmetric
 %       'errorfcn_down':
-%       'errorval'    : Forces the error bars to a specific numerical
-%                       height. For each point, lineplot determines the
-%                       mean of errorval and then uses this value. Usually
-%                       you use this, if you are passing one value per
-%                       category.
-%       'transformfcn': All plots-elements (including error bars are
-%                       transformed before plotting
-%       'split',var   : Variable to split the data by. Seperate lines are
+%       'errorval'     : Forces the error bars to a specific numerical
+%                        height. For each point, lineplot determines the
+%                        mean of errorval and then uses this value. Usually
+%                        you use this, if you are passing one value per
+%                        category.
+%       'errorval_up'  : Forces the upper error bar to a specific numerical
+%                        height.
+%       'errorval_down': Forces the lower error bar to a specific numerical
+%                        height.
+%       'transformfcn' : All plots-elements (including error bars are
+%                        transformed before plotting
+%       'split',var    : Variable to split the data by. Seperate lines are
 %                        drawn per value of the split-var
-%       'group',var:    Draw line only within group, but not between groups
-%       'subset'      : Plots only a subset of the data
+%       'group',var:     Draw line only within group, but not between groups
+%       'subset'       : Plots only a subset of the data
 %  EXAMPLE: for averaging of correlation after fisher-z transformation and
 %       concurrently inverse fisher-z trasnform + correct standard errors:
 %       lineplot(CORR,X,'plotfcn','mean(fisherz(x))',
@@ -112,7 +116,7 @@ c=1;
 while(c<=length(varargin))
     switch(varargin{c})
         case {'gap','XTickLabel','XCoord','plotfcn','errorfcn','errorfcn_up','errorfcn_down',...
-                'errorval','leg','leglocation','xcat','flip','catcol'}
+                'errorval','errorval_up','errorval_down','leg','leglocation','xcat','flip','catcol'}
             eval([varargin{c} '=varargin{c+1};']);
             c=c+2;
         % Style tabs: single value sets it for all values, cell array puts
@@ -263,6 +267,16 @@ if (exist('errorval'))
     ERROR_UP=ERROR;
     ERROR_DOWN=ERROR;
 else
+    if (exist('errorval_up'))
+        errorval_up=errorval_up(goodindx,:);
+        errorval_up=reshape(errorval_up,prod(size(errorval_up)),1);
+        [ERROR_UP,R,C]=pivottable(split,xvar,errorval_up,'mean');
+    end
+    if (exist('errorval_down'))
+        errorval_down=errorval_down(goodindx,:);
+        errorval_down=reshape(errorval_down,prod(size(errorval_down)),1);
+        [ERROR_DOWN,R,C]=pivottable(split,xvar,errorval_down,'mean');
+    end
     if (exist('errorfcn_up'))
         [ERROR_UP,R,C]=pivottable(split,xvar,y,errorfcn_up);
     end; 

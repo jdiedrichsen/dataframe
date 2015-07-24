@@ -1,7 +1,10 @@
 function varargout=scatterplot(x,y,varargin)
-%  function scatterplot(x,y,varargin)
-% Description
-%  varargin:
+% function scatterplot(x,y,varargin)
+% Provides a scatterplot of the y-values against x-values 
+% INPUT: 
+%       x:  Nx1 vector of x-values 
+%       y:  Nx1 vector of y-values 
+% VARARGIN:
 %   Format options (for all symbols)
 %       'markertype',{o s v ^...}
 %       'markercolor',[r g b]
@@ -10,38 +13,34 @@ function varargout=scatterplot(x,y,varargin)
 %               These can also be cell arrays for splitting
 %   Other commands:
 %       'CAT',cat        : Stucture with fields for a fix formating.
-%                           if string, uses predifined style.
+%                               if string, uses predifined style.
 %       'subset',indx    : plots only a subset of the data
 %       'split',splitby  : splits data by vaiable splitby
-%       'color',x      : Uses current color map to shade the circle in
+%       'color',x        : Uses current color map to shade the circle in
 %                           color corresponding to the range.
-%       'bubble',x    : Uses to x variable to determine markersize 
-%       'label',label:    Label each point with a number or string
-%       'colormap', CM: sets colormap
-%       'leg',{}/'auto'  : specified legend or auto
-%       'regression':'leastsquare/linear','robust'
-%                    In this case the output arguments are
+%       'bubble',x       : Uses to x variable to determine markersize 
+%       'label',label    : Label each point with a number or string
+%       'colormap', CM   : Sets colormap
+%       'leg',value      : specified legend string can be either a cell array of 
+%                          strings or the value 'auto'
+%       'regression'     : 'leastsquare/linear','robust'
+%                           In this case the output arguments are
 %                             r2: correlation coefficient^2
 %                             b: regression coefficients
 %                             t: t-value 
 %                             p: probability 
-%        'wfun':     'bisquare', 'cauchy', 'fair',
-%                   'huber', 'logistic', 'talwar', or 'welsch'
-%       'intercept',{0/1} (default yes)
-%       'polyorder',p   : Order of the polynomial (default 1)
-%       'printcorr':         Prints correlation onto the graph
-%       'draworig':       Draws origin into the graph
-%       'identity':         adds identity line 
-% Joern Diedrichsen (j.diedrichsen@bangor.ac.uk)
-% Olivier White
-% Ian O'Sullivan
-% v.1.1 9/18/05
-% v.1.2 12/14/05: Support for data sets without variation is added
-% v.1.3 17/09/07: Different forms of linear, polynomial and robuts regression lines added
-% v.1.4 1/4/08: Data label option
-% v.1.5 23/6/08: flags implemented (correlation displayed on the graph (flag printcorr) and origin (draworig))
-% v.1.6 22/8/08: Formating option as in lineplot, all options can be either cell
-% v.1.7 24/2/08: Bug fixing: displays Y-scale correctly when the data are on a horizontal negative line
+%       'intercept',val  : Determines whether intercept is included in regression
+%                            1:     have free intercept (default)
+%                            0:     Set the intercept to (0,0)
+%                            [x,y]: force the line to go through the point (x,y)
+%        'wfun'          : Weighting function for robust regression. Can be 
+%                           'bisquare', 'cauchy', 'fair',
+%                           'huber', 'logistic', 'talwar', or 'welsch'
+%       'polyorder',p    : Order of the polynomial of the regression (default 1)
+%       'printcorr'      : Prints correlation onto the graph
+%       'draworig'       : Draws origin into the graph
+%       'identity'       : Adds identity line 
+% Joern Diedrichsen (joern.diedrichsen@googlemail.com)
 
 [Nx n] = size(y);
 if (n>1)
@@ -271,37 +270,63 @@ figure(gcf);    % Bring figure to front on Mac platform
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Regression
+% Perform regression analysis 
 function [r2,b,t,p]=doregress(x,y,color,type, polyorder, intercept,wfun)
+
+offset = [0 0]; % Offset of data 
 
 i = find(~isnan(x) & ~isnan(y));
 X=[];
-if (intercept)
-    X=[ones(length(i),1)];
-end;
+
+if (length(intercept)==2)
+    x=x-intercept(1); 
+    y=y-intercept(2); 
+    offset = intercept; 
+elseif(length(intercept)==1) 
+    if (intercept==1)
+        X=[ones(length(i),1)];
+    end;
+else
+    error('Intercept needs to be either a logical (0 or 1), or a 1x2 vector'); 
+end; 
+
+% Add ploynomial order 
 for j=1:polyorder
     X=[X x(i).^j];
 end;
-if (length(i)<2);r2=NaN;b=ones(size(X,2),1)*NaN;t=NaN;p=NaN;return;end; % Check if enough data points 
 
-if (strcmp(type, 'linear') ||  strcmp(type, 'leastsquare'))
-    b=inv(X'*X)*X'*y(i);
-elseif strcmp(type, 'robust')
-    b = robustfit(X,y(i), wfun,[],'off');
+% Check if enough data points 
+if (length(i)<size(X,2));
+    r2=NaN;
+    b=ones(size(X,2),1)*NaN;
+    t=NaN;
+    p=NaN;
+    return;
+end; 
+
+% Run regression 
+switch (type) 
+    case {'linear','leastsquare'} 
+        b=inv(X'*X)*X'*y(i);
+    case 'robust'
+        b = robustfit(X,y(i), wfun,[],'off');
+    otherwise 
+        error(sprintf('unknown regression type: %s',type)); 
 end
 
-% make predicted values and fit
+% generate predicted values
 y_est = X*b;
 xs=[min(x):0.01:max(x)]';
 XS=[];
-if (intercept)
+if (length(intercept)==1 && intercept==1)
     XS=[ones(length(xs),1)];
 end;
 for j=1:polyorder
     XS=[XS xs.^j];
 end;
 
-h=plot (xs, XS*b);
+% Plot the regression line 
+h=plot (xs+offset(1), XS*b+offset(2));
 set(h,'Color',color);
 RSS = sum((y(i) - y_est).^2);
 TSS = sum((y(i) - mean(y(i))).^2);

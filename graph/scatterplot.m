@@ -39,7 +39,11 @@ function varargout=scatterplot(x,y,varargin)
 %       'polyorder',p    : Order of the polynomial of the regression (default 1)
 %       'printcorr'      : Prints correlation onto the graph
 %       'draworig'       : Draws origin into the graph
-%       'identity'       : Adds identity line 
+%       'identity'       : Adds identity line
+%       'xaxisIncl'      : Points (min,max) on xaxis that need to be shown: XLim will
+%                          be larger of the same 
+%       'yaxisIncl'      : Points (min,max) on yaxis that need to be shown: YLim will
+%                          be larger of the same 
 % Joern Diedrichsen (joern.diedrichsen@googlemail.com)
 
 [Nx n] = size(y);
@@ -72,11 +76,15 @@ split=[];subset=ones(size(y,1),1);color=[];
 bubble=[];
 bubble_minsize=3;
 bubble_maxsize=30;
+yaxisIncl=[];
+xaxisIncl=[];
+
 variables={'markertype','markercolor','markerfill','markersize','CAT',...
     'subset','split','leg','leglocation','color','label',...
     'regression','polyorder','intercept',...
     'colormap',...
-    'bubble','bubble_minsize','bubble_maxsize'};
+    'bubble','bubble_minsize','bubble_maxsize',...
+    'xaxisIncl','yaxisIncl'};
 flags={'draworig','printcorr','identity'};
 
 vararginoptions(varargin,variables,flags);
@@ -152,13 +160,17 @@ xmax = max(x);
 dx = (xmax-xmin)/20;
 if (dx==0) dx=xmax/10;end;
 xlims = [(xmin-dx) (xmax+dx)];
-
+if (~isempty(xaxisIncl))
+    xlims = [min(xlims(1),min(xaxisIncl)) max(xlims(2),max(xaxisIncl))];
+end; 
 ymin = min(y);
 ymax = max(y);
 dy = (ymax-ymin)/20;
 if (dy==0) dy=abs(ymax)/10;end;
 ylims = [(ymin-dy) (ymax+dy)];
-
+if (~isempty(yaxisIncl))
+    ylims = [min(ylims(1),min(yaxisIncl)) max(ylims(2),max(yaxisIncl))];
+end; 
 
 repl_state=get(gca,'NextPlot');
 if (strcmp(repl_state,'replace'))
@@ -316,7 +328,8 @@ end
 
 % generate predicted values
 y_est = X*b;
-xs=[min(x):0.01:max(x)]';
+xlim=get(gca,'XLim'); 
+xs=linspace(min(xlim),max(xlim),20); 
 XS=[];
 if (length(intercept)==1 && intercept==1)
     XS=[ones(length(xs),1)];

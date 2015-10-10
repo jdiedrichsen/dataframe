@@ -20,7 +20,7 @@ function varargout=scatterplot3(x,y,z,varargin)
 %       'labelcolor',x : color of text labels 
 %       'labelsize',x : size of text labels 
 %       'labelfont',x : font of labels. 
-%       'labelformat','%d' : format string of labels  
+%       'labelformat',' : font of labels. 
 %       'colormap', CM: sets colormap
 %       'leg',{}/'auto'  : specified legend or auto
 %       'draworig':       Draws origin into the graph
@@ -45,8 +45,7 @@ draworig=0;
 identity=0; 
 label=[];
 labelformat='%d';
-labelsize=10; 
-labelfont='arial'; 
+label
 leg=[];
 CAT=[];
 leglocation='SouthEast';
@@ -58,8 +57,7 @@ bubble=[];
 bubble_minsize=3;
 bubble_maxsize=30;
 variables={'markertype','markercolor','markerfill','markersize','CAT',...
-    'subset','split','leg','leglocation','color',...
-    'label','labelcolor','labelsize','labelfont',...
+    'subset','split','leg','leglocation','color','label','labelcolor'...
     'colormap',...
     'bubble','bubble_minsize','bubble_maxsize'};
 flags={'draworig','printcorr','identity'};
@@ -224,13 +222,13 @@ if (~isempty(label))
         label={label{find(subset)}};
         for i=1:length(x)
             th=text(x(i)+xoffset,y(i)+yoffset,z(i)+zoffset,label{i});
-            set(th,'Color',labelcolor,'FontSize',labelsize,'FontName',labelfont); 
+            set(th,'Color',labelcolor); 
         end;
     else
         label=label(find(subset));
         for i=1:length(x)
             th=text(x(i)+xoffset,y(i)+yoffset,z(i)+zoffset,sprintf(labelformat,label(i)));
-            set(th,'Color',labelcolor,'FontSize',labelsize,'FontName',labelfont); 
+            set(th,'Color',labelcolor); 
         end;
     end;
 end;

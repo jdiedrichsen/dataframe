@@ -21,11 +21,11 @@ switch (kind)
         if (nargout==0)
             fprintf(['Condition 1: %2.3f (%2.3f)\n'...
                      'Condition 2: %2.3f (%2.3f)\n'...
-                     'Difference: %2.3f (%2.3f)\n'],...
+                     'Difference:  %2.3f (%2.3f)\n'],...
                 nanmean(groupA(indx)),nanstd(groupA(indx))/sqrt(N),...
                 nanmean(groupB(indx)),nanstd(groupB(indx))/sqrt(N),...
                 nanmean(groupA(indx)-groupB(indx)),std(groupA(indx)-groupB(indx))/sqrt(N));
-            fprintf('t(%i) = %2.3f  p = %2.3f\n',df,t,p);
+            fprintf('t(%i) = %2.3f  p = %2.5f\n',df,t,p);
         end;
     case 'independent'
         indxA=find(~isnan(groupA));
@@ -62,7 +62,7 @@ switch (kind)
             p=1-tcdf(t,df);
         end; 
         if (nargout==0)
-            fprintf('Mean: %2.2f (%2.3f)\n',nanmean(groupA(indx)),nanstd(groupA(indx))/sqrt(N));
-            fprintf('t(%i) = %2.3f  p = %2.3f\n',df,t,p);
+            fprintf('Mean: %2.3f (%2.3f)\n',nanmean(groupA(indx)),nanstd(groupA(indx))/sqrt(N));
+            fprintf('t(%i) = %2.3f  p = %2.5f\n',df,t,p);
         end;
 end;

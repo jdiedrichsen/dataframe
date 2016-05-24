@@ -6,5 +6,7 @@ if (nargin==1)
     COV=X'*X;
     r=corrcov(COV); 
 else 
-    r=X'*Y./(sqrt(X'*X)*sqrt(Y'*Y));
+    ssX=sum(X.*X,1);
+    ssY=sum(Y.*Y,1); 
+    r=X'*Y./(sqrt(ssX')*sqrt(ssY));
 end; 

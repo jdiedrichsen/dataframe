@@ -121,7 +121,7 @@ switch (what)
         end; 
         X=A; 
     otherwise
-        error('no such case');
+         error('no such case');
 end;
 
 % Transpose design matrix

@@ -11,7 +11,7 @@ function p = testGroupPatternDiff(Y,g,varargin);
 %   g: Nx1 group membership of the g subjects to group 1 and 2
 % VARARGIN:
 %   'metric',name:
-%       'Eucledian':    Eucledian distance
+%       'Euclidean':    Eucledian distance
 %       'Mahalanobis':  Mahalanobis distance - using regularised Sigma estimate
 %   permMethod, name:   Method used for permutation
 %       'permute'       Exhaustive permutatation

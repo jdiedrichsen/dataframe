@@ -21,6 +21,7 @@ function PLOT=traceplot(t,data,varargin);
 % v 1.1 Displaying one timeseries per category is possible now
 %       recycling of format in split categories 
 % v 1.2 cell arrays can be given for any formating option 
+% v.1.3 Added support for leglocation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Defaults and deal with options 
 
@@ -42,7 +43,7 @@ YLim=[];
 c=1;
 while(c<=length(varargin))
     switch(varargin{c})
-        case {'subset','split','leg','plotfcn','errorfcn','XLim','YLim'};
+        case {'subset','split','leg','leglocation','plotfcn','errorfcn','XLim','YLim'};
             eval([varargin{c} '=varargin{c+1};']);
             c=c+2;
         % Style tabs: single value sets it for all values, cell array puts
@@ -135,7 +136,7 @@ end;
 % Do legend 
 if (~isempty(split))
     R=vertcat(A{:,1});
-    plotlegend(h,leg,R,split_conv);
+    plotlegend(h,leg,R,split_conv,leglocation);
 end;
 
 figure(gcf);

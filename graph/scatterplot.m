@@ -329,7 +329,7 @@ end
 % generate predicted values
 y_est = X*b;
 xlim=get(gca,'XLim'); 
-xs=linspace(min(xlim),max(xlim),20); 
+xs=linspace(min(xlim),max(xlim),20)'; 
 XS=[];
 if (length(intercept)==1 && intercept==1)
     XS=[ones(length(xs),1)];

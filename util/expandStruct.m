@@ -33,7 +33,7 @@ end;
 T.(columnfield) = kron(ones(N,1),[1:P]'); 
 
 for i=1:length(names)
-    if isempty(find(strcmp(names{i},matrixfields)))
+    if isempty(find(strcmp(names{i},matrixfields))) && (~iscell(D.(names{i}))) && (size(D.(names{i}),2)==1)
         T.(names{i})=kron(D.(names{i}),ones(P(1),1)); 
     end; 
 end; 

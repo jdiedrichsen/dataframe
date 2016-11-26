@@ -210,9 +210,9 @@ for row=1:numsplitcatSP{1}
                 switch (style)
                     case 'bar'
                         h(cat)=bar(X,N(cat,:),fm.barwidth);
-                        if versionNum<8.5 % Use the old graphics system  
-                            h(cat)=get(h(cat),'Children');
-                        end; 
+%                         if versionNum<8.5 % Use the old graphics system  
+%                             h(cat)=get(h(cat),'Children');
+%                         end; 
                         % Draw the outline
                         if (strcmp(fm.linestyle,'outline'))
                             dx=min(diff(X));

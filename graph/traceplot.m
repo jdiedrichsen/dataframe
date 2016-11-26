@@ -37,6 +37,7 @@ subset=[];
 split=[];
 XLim=[];
 YLim=[];
+leglocation='NorthEast';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Deal with the varargin's

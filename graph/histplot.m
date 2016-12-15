@@ -77,7 +77,7 @@ while(c<=length(varargin))
             eval([varargin{c} '=varargin{c+1};']);c=c+2;
         case {'facecolor','facealpha','linecolor','linewidth',...
                 'fillcolor','markersize','markertype',...
-                'markercolor','markerfill'};
+                'markercolor','markerfill','barwidth'};
             eval(['F.',varargin{c} '=varargin{c+1};']);c=c+2;
         case 'style_bar1'
             style='bar';
@@ -235,7 +235,7 @@ for row=1:numsplitcatSP{1}
                             fm.linestyle='none';
                         end;
                         %
-                        if (versionNum<8.5) 
+                        if (versionNum<8.4) 
                             set(h(cat),'EdgeColor',fm.linecolor,'linestyle',fm.linestyle,'FaceColor',fm.facecolor,'LineWidth',fm.linewidth,'FaceAlpha',fm.facealpha);
                         else
                             set(h(cat),'EdgeColor',fm.linecolor,'linestyle',fm.linestyle,'FaceColor',fm.facecolor,'LineWidth',fm.linewidth);

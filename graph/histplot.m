@@ -22,7 +22,7 @@ function [N,catX]=histplot(y,varargin)
 %       'fit',{'Xcdf',[P1 P2 .... ]}: overlays distribution function to the
 %                                     data 
 %    Predetermined styles
-%       'style_bar1'          : Tranditional barplot
+%       'style_bar1'          : Overlapping histogram outlines 
 % -------------------------------------------------------------------------
 % Fixes
 % v1.1: if all data is nan for one category, it leaves box open 01/25/06
@@ -238,7 +238,7 @@ for row=1:numsplitcatSP{1}
                         if (versionNum<8.4) 
                             set(h(cat),'EdgeColor',fm.linecolor,'linestyle',fm.linestyle,'FaceColor',fm.facecolor,'LineWidth',fm.linewidth,'FaceAlpha',fm.facealpha);
                         else
-                            set(h(cat),'EdgeColor',fm.linecolor,'linestyle',fm.linestyle,'FaceColor',fm.facecolor,'LineWidth',fm.linewidth);
+                            set(h(cat),'EdgeColor',fm.linecolor,'linestyle',fm.linestyle,'FaceColor','none','LineWidth',fm.linewidth);
                         end; 
                     case 'line'
                         h(cat)=plot(X,N(cat,:));

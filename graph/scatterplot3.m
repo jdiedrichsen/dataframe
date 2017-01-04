@@ -136,19 +136,19 @@ end;
 xmin = min(x);
 xmax = max(x);
 dx = (xmax-xmin)/20;
-if (dx==0) dx=xmax/10;end;
+if (dx<eps) dx=1;end;
 xlims = [(xmin-dx) (xmax+dx)];
 
 ymin = min(y);
 ymax = max(y);
 dy = (ymax-ymin)/20;
-if (dy==0) dy=abs(ymax)/10;end;
+if (dy<eps) dy=1;end;
 ylims = [(ymin-dy) (ymax+dy)];
 
 zmin = min(z);
 zmax = max(z);
 dz = (zmax-zmin)/20;
-if (dz==0) dz=abs(zmax)/10;end;
+if (dz<eps) dz=1;end;
 zlims = [(zmin-dz) (zmax+dz)];
 
 repl_state=get(gca,'NextPlot');
@@ -200,7 +200,7 @@ for c=1:numsplitcat
     end;
 end;
 
-set(gca,'XLim',xlims,'YLim',ylim,'ZLim',zlim); 
+set(gca,'XLim',xlims,'YLim',ylims,'ZLim',zlims); 
 set(gca,'ZGrid','on','XGrid','on','YGrid','on'); 
 
 if (draworig)

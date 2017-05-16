@@ -219,7 +219,9 @@ for c=1:numsplitcat
     end;
     
     if (~isempty(regression))
-        [r2(c),b(:,c),t(:,c),p(:,c)] = doregress(D{c,2}(:,1),D{c,2}(:,2),fm.markercolor, regression, polyorder, intercept,wfun);
+        if ~strcmp(regression,'none')
+            [r2(c),b(:,c),t(:,c),p(:,c)] = doregress(D{c,2}(:,1),D{c,2}(:,2),fm.markercolor, regression, polyorder, intercept,wfun);
+        end;
     end;
 end;
 if (ylims(1)==ylims(2))

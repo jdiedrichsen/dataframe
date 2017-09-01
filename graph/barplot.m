@@ -62,6 +62,7 @@ leg=[];
 leglocation='NorthWest';
 plotfcn='nanmean';
 errorfcn='stderr';
+XTickLabel={}; 
 numxvars=size(xvar,2);
 split=[];numsplitvars=0;
 goodindx=[1:size(y,1)]';
@@ -151,24 +152,34 @@ if (ischar(errorfcn))
 elseif (~isempty(errorfcn))
     ERROR=errorfcn';
 end;
-[Xcategory,dummy,xcat]=unique(R,'rows');
+[Xcategory,~,xcat]=unique(R,'rows');
+[XVarLabel]=unique(R(:,1:numxvars),'rows');
+
 if numsplitvars>0
     [Splitcategory,dummy,splitcat]=unique(R(:,numxvars+1:numxvars+numsplitvars),'rows');
 else 
     splitcat=ones(size(R,1),1);
 end;
-glabels=makexlabels(Xcategory(:,1:numxvars),xvar_conv);
+if (isempty(XTickLabel))    
+    glabels=makexlabels(XVarLabel,xvar_conv);
+else 
+    glabels=XTickLabel; 
+end; 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Now format the x-size depending on the grouping structure: respect
 % different gapwidth for different levels 
 x_coord=1;
+x_tick =1; % Ticks for bar group labels 
 for i=2:size(R,1)
     diffxcat=find(R(i,:)~=R(i-1,:));
     x_coord(i)=x_coord(i-1)+1;
     if ~isempty(diffxcat)
         x_coord(i)=x_coord(i)+gapwidth(diffxcat(1)); 
     end;
+    if any(R(i,1:numxvars)~=R(i-1,1:numxvars));
+        x_tick(end+1)=x_coord(i); 
+    end; 
 end;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +218,7 @@ if (ylims(2)-ylims(1))<0.0001
 end;
 if ~flip
     axis([xlims ylims]);
-    set(gca,'XTick',x_coord);
+    set(gca,'XTick',x_tick);
     set(gca,'XTickLabel',glabels);
     set(gca,'YLabel',text(0,0,'Values'));
     %if (isempty(g)), set(gca,'XLabel',text(0,0,'Column Number')); end

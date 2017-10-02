@@ -225,7 +225,7 @@ if (~isempty(label))
         label={label{find(subset)}};
         for i=1:length(x)
             th=text(x(i)+xoffset,y(i)+yoffset,z(i)+zoffset,label{i});
-            set(th,'Color',labelcolor{i},'FontSize',labelsize,'FontName',labelfont); 
+            set(th,'Color',labelcolor,'FontSize',labelsize,'FontName',labelfont); 
         end;
     else
         label=label(find(subset));

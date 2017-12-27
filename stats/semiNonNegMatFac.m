@@ -1,33 +1,41 @@
-function [F,G,Err]=semiNonNegMatFac(X,k,varargin); 
+function [F,G,Err2]=semiNonNegMatFac(X,k,varargin); 
 % Semi-nonnegative matrix factorization 
 % as in Ding & Jordan
 % Joern Diedrichsen 
 G0= []; 
 threshold = 0.01; 
-vararginoptions(varargin,'G0'); 
+maxIter = 5000; 
+vararginoptions(varargin,{'G0','threshold','maxIter'}); 
 if (isempty(G0))
     g=kmeans(X,k); 
     G0 = indicatorMatrix('identity',g); 
 end; 
 df = inf; 
-G=G0; 
+G=G0;
+G(G<0.2)=0.2; 
 n=1; 
 while df>threshold 
     F=X*pinv(G'); 
-    res = X-F*G'; 
-    Err1(n)=sum(sum(res.^2)); 
+    R = X-F*G'; 
+    Err1(n)=sum(sum(R.*R)); 
     A=X'*F; 
     B=F'*F;
-    Ap = A; Ap(Ap<0)=0; 
-    Am = A; Am(Am>0)=0; 
-    Bp = B; Bp(Bp<0)=0; 
-    Bm = B; Bm(Bm>0)=0; 
-    G=G.*sqrt((Ap+G*Bm)./(Am+G*Bp));   % Update rule Eq. (8) 
-    res = X-F*G'; 
-    Err2(n)=sum(sum(res.^2)); 
+    Ap = (abs(A)+A)/2; 
+    Am = (abs(A)-A)/2; 
+    Bp = (abs(B)+B)/2; 
+    Bm = (abs(B)-B)/2; 
+    V=((Ap+G*Bm)./(Am+G*Bp));   % Update rule Eq. (8) 
+    if (any(isnan(V(:))))
+        keyboard;  % Check update stability....
+    end; 
+    if (any(V(:)<0)); 
+        keyboard;
+    end; 
+    G= G.*sqrt(V); 
+    R = X-F*G'; 
+    Err2(n)=sum(sum(R.*R)); 
     if (n>1) 
         df=Err2(n-1)-Err2(n); 
     end; 
     n=n+1; 
 end; 
-keyboard; 

@@ -1,18 +1,21 @@
 function [F,G,Err2]=semiNonNegMatFac(X,k,varargin); 
 % Semi-nonnegative matrix factorization 
 % as in Ding & Jordan
+% X: NxP Matrix of P observations to be clustered over N variables 
+% X = F *G' 
+% k: number of clusters 
 % Joern Diedrichsen 
-G0= []; 
-threshold = 0.01; 
-maxIter = 5000; 
-vararginoptions(varargin,{'G0','threshold','maxIter'}); 
+G0= [];                 % Startibg value (otherwise uses Kmeans + 0.2)
+threshold = 0.01;       % Threshold on reconstruction error 
+maxIter = 5000;         % Maximal number of iterations 
+normaliseF = 1;         % Normalise F to unit vectors afterwards?
+vararginoptions(varargin,{'G0','threshold','maxIter','normaliseF'}); 
 if (isempty(G0))
-    g=kmeans(X,k); 
+    g=kmeans(X',k); 
     G0 = indicatorMatrix('identity',g); 
 end; 
 df = inf; 
-G=G0;
-G(G<0.2)=0.2; 
+G=G0+0.2;       % Starting values of the floor 
 n=1; 
 while df>threshold 
     F=X*pinv(G'); 
@@ -38,4 +41,11 @@ while df>threshold
         df=Err2(n-1)-Err2(n); 
     end; 
     n=n+1; 
+end; 
+
+% If necessary, normalize vectors in F to unity afterwards 
+if (normaliseF) 
+    f=sqrt(sum(F.^2)); % Factor for normalisation 
+    F=bsxfun(@times,F,1./f); 
+    G=bsxfun(@times,G,f);  % Normalise the group factor the other way
 end; 

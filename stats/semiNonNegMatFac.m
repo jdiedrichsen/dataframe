@@ -11,7 +11,7 @@ maxIter = 5000;         % Maximal number of iterations
 normaliseF = 1;         % Normalise F to unit vectors afterwards?
 vararginoptions(varargin,{'G0','threshold','maxIter','normaliseF'}); 
 if (isempty(G0))
-    g=kmeans(X',k); 
+    g=kmeans(X',k,'MaxIter',maxIter); % MK added maxIner option here
     G0 = indicatorMatrix('identity',g); 
 end; 
 df = inf; 

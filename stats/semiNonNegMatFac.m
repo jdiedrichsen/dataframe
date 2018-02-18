@@ -1,4 +1,4 @@
-function [F,G,Err2]=semiNonNegMatFac(X,k,varargin); 
+function [F,G,Info]=semiNonNegMatFac(X,k,varargin); 
 % Semi-nonnegative matrix factorization 
 % as in Ding & Jordan
 % X: NxP Matrix of P observations to be clustered over N variables 
@@ -49,3 +49,7 @@ if (normaliseF)
     F=bsxfun(@times,F,1./f); 
     G=bsxfun(@times,G,f);  % Normalise the group factor the other way
 end; 
+
+% Provide fitting info 
+Info.numiter = n-1; 
+Info.error   = Err2(end); 

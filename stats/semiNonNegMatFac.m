@@ -1,17 +1,19 @@
-function [F,G,Err2]=semiNonNegMatFac(X,k,varargin); 
+function [F,G,Info,winner]=semiNonNegMatFac(X,k,varargin); 
 % Semi-nonnegative matrix factorization 
 % as in Ding & Jordan
 % X: NxP Matrix of P observations to be clustered over N variables 
 % X = F *G' 
 % k: number of clusters 
 % Joern Diedrichsen 
+% Maedbh King: added winner-take-all and R2 and R as output
+
 G0= [];                 % Startibg value (otherwise uses Kmeans + 0.2)
 threshold = 0.01;       % Threshold on reconstruction error 
 maxIter = 5000;         % Maximal number of iterations 
 normaliseF = 1;         % Normalise F to unit vectors afterwards?
 vararginoptions(varargin,{'G0','threshold','maxIter','normaliseF'}); 
 if (isempty(G0))
-    g=kmeans(X',k,'MaxIter',maxIter); % MK added maxIner option here
+    g=kmeans(X',k);
     G0 = indicatorMatrix('identity',g); 
 end; 
 df = inf; 
@@ -49,3 +51,22 @@ if (normaliseF)
     F=bsxfun(@times,F,1./f); 
     G=bsxfun(@times,G,f);  % Normalise the group factor the other way
 end; 
+
+% Provide fitting info
+% R2
+SSR=nansum(R.*R); 
+SST=nansum(X.*X); 
+
+% R
+P=F*G'; 
+SXP=nansum(nansum(X.*P,1)); 
+SPP=nansum(nansum(P.*P)); 
+
+%Info.numiter = n-1; 
+Info.error   = Err2(end);
+Info.R2_vox  = 1-nansum(R.*R)./nansum(X.*X);  % MK: R2=1-SSR/SST
+Info.R2      = 1-nansum(SSR)./nansum(SST); 
+Info.R       = SXP./sqrt(nansum(SST).*SPP);   % MK: R=covar(X,P)/var(X)*var(P)
+
+% Do winner-take-all
+[~,winner]=max(G,[],2); % MK

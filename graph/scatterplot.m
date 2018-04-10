@@ -45,6 +45,7 @@ function varargout=scatterplot(x,y,varargin)
 %       'yaxisIncl'      : Points (min,max) on yaxis that need to be shown: YLim will
 %                          be larger of the same 
 % Joern Diedrichsen (joern.diedrichsen@googlemail.com)
+% MK: added 'labelsize' and 'labelfont' options
 
 [Nx n] = size(y);
 if (n>1)
@@ -65,6 +66,8 @@ intercept=1;
 polyorder=1;
 label=[];
 labelformat='%d';
+labelsize=10; 
+labelfont='arial'; 
 wfun='bisquare';
 leg=[];
 r2=[];t=[];
@@ -80,7 +83,7 @@ yaxisIncl=[];
 xaxisIncl=[];
 
 variables={'markertype','markercolor','markerfill','markersize','CAT',...
-    'subset','split','leg','leglocation','color','label',...
+    'subset','split','leg','leglocation','color','label','labelsize','labelfont'...
     'regression','polyorder','intercept',...
     'colormap',...
     'bubble','bubble_minsize','bubble_maxsize',...
@@ -120,6 +123,7 @@ F.markersize=markersize;
 F.markertype=markertype;
 F.markercolor=markercolor;
 F.markerfill=markerfill;
+F.labelcolor=labelcolor; % MK added
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % re-code cell array
@@ -251,14 +255,16 @@ if (~isempty(label))
         xoffset=(xlims(2)-xlims(1))/40;
         yoffset=(ylims(2)-ylims(1))/40;
         for i=1:length(x)
-            text(x(i)+xoffset,y(i)+yoffset,label{i});
+            th=text(x(i)+xoffset,y(i)+yoffset,label{i});
+            set(th,'Color',labelcolor{i},'FontSize',labelsize,'FontName',labelfont) % MK added
         end;
     else
         label=label(find(subset));
         xoffset=(xlims(2)-xlims(1))/40;
         yoffset=(ylims(2)-ylims(1))/40;
         for i=1:length(x)
-            text(x(i)+xoffset,y(i)+yoffset,sprintf(labelformat,label(i)));
+            th=text(x(i)+xoffset,y(i)+yoffset,sprintf(labelformat,label(i)));
+            set(th,'Color',labelcolor{i},'FontSize',labelsize,'FontName',labelfont) % MK added
         end;
     end;
 end;

@@ -45,7 +45,7 @@ function varargout=scatterplot(x,y,varargin)
 %       'yaxisIncl'      : Points (min,max) on yaxis that need to be shown: YLim will
 %                          be larger of the same 
 % Joern Diedrichsen (joern.diedrichsen@googlemail.com)
-% MK: added 'labelsize' and 'labelfont' options
+% MK: added label options: labelcolor, labelsize, labelfont
 
 [Nx n] = size(y);
 if (n>1)

@@ -17,7 +17,7 @@ end;
 df = inf; 
 G=G0+0.2;       % Starting values of the floor 
 n=1; 
-while df>threshold 
+while df>threshold && n<maxIter 
     F=X*pinv(G'); % Surpringly slightly faster than  F=X/G';
     % R = X-F*G'; 
     % Err1(n)=sum(sum(R.*R)); 

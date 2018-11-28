@@ -1,13 +1,14 @@
-function [F,G,Err,W]=cnvSemiNonNegMatFac(X,k,varargin); 
+function [F,G,Info,W,Err]=cnvSemiNonNegMatFac(X,k,varargin); 
 % Convex semi-nonnegative matrix factorization 
 % as in Ding & Jordan
 % Joern Diedrichsen 
 G0= []; 
 threshold = 0.001;
 maxIter = 5000; 
-vararginoptions(varargin,{'G0','threshold','maxIter'}); 
+normaliseF=1; 
+vararginoptions(varargin,{'G0','threshold','maxIter','normaliseF'}); 
 if (isempty(G0))
-    g=kmeans(X,k); 
+    g=kmeans(X',k); 
     G0 = indicatorMatrix('identity',g); 
 end; 
 df = inf; 
@@ -29,9 +30,13 @@ Am = (abs(A)-A)/2;
 clear A; 
 
 while df>threshold && n<maxIter 
-    Vg=(Ap*W+G*W'*Am*W)./(Am*W+G*W'*Ap*W);
+    ApW = Ap*W; 
+    AmW = Am*W; 
+    GW  = G*W'; 
+    Vg=(ApW+GW*AmW)./(AmW+GW*ApW);
     G=G.*sqrt(Vg); 
-    Vw=(Ap*G+Am*W*(G'*G))./(Am*G+Ap*W*(G'*G)); 
+    GG=G'*G; 
+    Vw=(Ap*G+Am*W*GG)./(Am*G+Ap*W*GG); 
     W=W.*sqrt(Vw); 
     R = X-X*W*G'; 
     n=n+1; 
@@ -40,3 +45,12 @@ while df>threshold && n<maxIter
 end; 
 
 F=X*W; 
+
+if (normaliseF) 
+    f=sqrt(sum(F.^2)); % Factor for normalisation 
+    F=bsxfun(@times,F,1./f); 
+    G=bsxfun(@times,G,f);  % Normalise the group factor the other way
+end; 
+
+Info.numiter = n;  
+Info.error=Err(end); 

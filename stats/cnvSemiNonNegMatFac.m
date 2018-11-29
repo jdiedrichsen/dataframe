@@ -24,7 +24,7 @@ end;
 Err(n)=sum(sum((X-X*W*G').^2)); 
 
 % Initialize computation 
-A=X'*X; 
+A  = single(X'*X); 
 Ap = (abs(A)+A)/2; 
 Am = (abs(A)-A)/2; 
 clear A; 
@@ -32,17 +32,20 @@ clear A;
 while df>threshold && n<maxIter 
     ApW = Ap*W; 
     AmW = Am*W; 
-    GW  = G*W'; 
-    Vg=(ApW+GW*AmW)./(AmW+GW*ApW);
+    Vg=(ApW+G*(W'*AmW))./(AmW+G*(W'*ApW));
     G=G.*sqrt(Vg); 
     GG=G'*G; 
-    Vw=(Ap*G+Am*W*GG)./(Am*G+Ap*W*GG); 
+    Vw=(Ap*G+AmW*GG)./(Am*G+ApW*GG); 
     W=W.*sqrt(Vw); 
     R = X-X*W*G'; 
     n=n+1; 
     Err(n)=sum(sum(R.*R)); 
     df=Err(n-1)-Err(n); 
+    if (mod(n,10)==0)
+        fprintf('.'); 
+    end; 
 end; 
+fprintf('.\n'); 
 
 F=X*W; 
 

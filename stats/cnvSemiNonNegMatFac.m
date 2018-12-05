@@ -2,25 +2,34 @@ function [F,G,Info,W,Err]=cnvSemiNonNegMatFac(X,k,varargin);
 % Convex semi-nonnegative matrix factorization 
 % as in Ding & Jordan
 % Joern Diedrichsen 
-G0= []; 
+F0= []; 
+G0 = []; 
 threshold = 0.001;
 maxIter = 5000; 
 normaliseF=1; 
-vararginoptions(varargin,{'G0','threshold','maxIter','normaliseF'}); 
-if (isempty(G0))
+vararginoptions(varargin,{'F0','G0','threshold','maxIter','normaliseF'}); 
+if (isempty(F0) && isempty(G0))
     g=kmeans(X',k); 
     G0 = indicatorMatrix('identity',g); 
-end; 
-df = inf; 
-G=G0;
+    G=G0+0.2;       % Starting values of the floor 
+    W = G/(G'*G); 
+    if (any(W(:)<0))
+        keyboard; 
+    end; 
+elseif (~isempty(G0))
+    scaleG = sum(abs(G0(:)))/sum(G0(:)>0);
+    G=G0+0.2*scaleG; 
+    W = G/(G'*G);
+    W(W<0)=0; 
+    scaleW = sum(abs(W(:)))/sum(W(:)>0);
+    W = W +0.2*scaleW; 
+else 
+    error('F0 setting not supported yet'); 
+end;
 
 % Initialization 
-G=G+0.2; 
 n=1;
-W = G/(G0'*G0); 
-if (any(W<0))
-    keyboard; 
-end; 
+df = inf; 
 Err(n)=sum(sum((X-X*W*G').^2)); 
 
 % Initialize computation 

@@ -7,8 +7,9 @@ function [AR,RI,MI,HI]=RandIndex(c1,c2)
 %
 % See L. Hubert and P. Arabie (1985) "Comparing Partitions" Journal of 
 % Classification 2:193-218
-
 %(C) David Corney (2000)   		D.Corney@cs.ucl.ac.uk
+% Edited so that zeros and NaNs are ignored
+
 
 if nargin < 2 | min(size(c1)) > 1 | min(size(c2)) > 1
    error('RandIndex: Requires two vector arguments')
@@ -48,8 +49,16 @@ if nargin < 2 | min(size(Mem1)) > 1 | min(size(Mem2)) > 1
    return
 end
 
+Mem1(isnan(Mem1))=0; 
+Mem2(isnan(Mem2))=0; 
+
 Cont=zeros(max(Mem1),max(Mem2));
 
-for i = 1:length(Mem1);
+index = find(Mem1>0 & Mem2>0); 
+if size(index,2)==1
+    index=index'; 
+end; 
+
+for i = index
    Cont(Mem1(i),Mem2(i))=Cont(Mem1(i),Mem2(i))+1;
 end

@@ -10,7 +10,6 @@ function [AR,RI,MI,HI]=RandIndex(c1,c2)
 %(C) David Corney (2000)   		D.Corney@cs.ucl.ac.uk
 % Edited so that zeros and NaNs are ignored
 
-
 if nargin < 2 | min(size(c1)) > 1 | min(size(c2)) > 1
    error('RandIndex: Requires two vector arguments')
    return
@@ -40,7 +39,7 @@ end
 
 RI=A/t1;			%Rand 1971		%Probability of agreement
 MI=D/t1;			%Mirkin 1970	%p(disagreement)
-HI=(A-D)/t1;	%Hubert 1977	%p(agree)-p(disagree)
+HI=(A-D)/t1;	    %Hubert 1977	%p(agree)-p(disagree)
 
 function Cont=Contingency(Mem1,Mem2)
 

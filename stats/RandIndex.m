@@ -9,6 +9,7 @@ function [AR,RI,MI,HI]=RandIndex(c1,c2)
 % Classification 2:193-218
 
 %(C) David Corney (2000)   		D.Corney@cs.ucl.ac.uk
+% Maedbh King edited so that zeros and NaNs are ignored
 
 if nargin < 2 | min(size(c1)) > 1 | min(size(c2)) > 1
    error('RandIndex: Requires two vector arguments')
@@ -39,7 +40,7 @@ end
 
 RI=A/t1;			%Rand 1971		%Probability of agreement
 MI=D/t1;			%Mirkin 1970	%p(disagreement)
-HI=(A-D)/t1;	%Hubert 1977	%p(agree)-p(disagree)
+HI=(A-D)/t1;	    %Hubert 1977	%p(agree)-p(disagree)
 
 function Cont=Contingency(Mem1,Mem2)
 
@@ -50,6 +51,12 @@ end
 
 Cont=zeros(max(Mem1),max(Mem2));
 
+Mem1(isnan(Mem1))=0; % MK add
+Mem2(isnan(Mem2))=0; % MK add
 for i = 1:length(Mem1);
+    if Mem1(i)==0 || Mem2(i)==0, % MK add
+        i=i+1;
+    else
    Cont(Mem1(i),Mem2(i))=Cont(Mem1(i),Mem2(i))+1;
+    end
 end

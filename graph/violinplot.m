@@ -1,4 +1,4 @@
-function [x_coord,MEAN,MEDIAN,Ndata]=violineplot(xvar,y,varargin)
+function [x_coord,MEAN,MEDIAN,Ndata]=violinplot(xvar,y,varargin)
 % Synopsis
 % [x_coord,MEAN,MEDIAN,Ndata]=violineplot(xvar,y,varargin)
 % Description

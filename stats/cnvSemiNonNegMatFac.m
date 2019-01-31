@@ -13,9 +13,9 @@ if (isempty(F0) && isempty(G0))
     G0 = indicatorMatrix('identity',g); 
     G=G0+0.2;       % Starting values of the floor 
     W = G/(G'*G); 
-    if (any(W(:)<0))
-        keyboard; 
-    end; 
+    W(W<0)=0; 
+    scaleW = sum(abs(W(:)))/sum(W(:)>0);
+    W = W +0.2*scaleW; 
 elseif (~isempty(G0))
     scaleG = sum(abs(G0(:)))/sum(G0(:)>0);
     G=G0+0.2*scaleG; 

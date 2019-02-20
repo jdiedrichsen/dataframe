@@ -8,6 +8,19 @@ threshold = 0.001;
 maxIter = 5000; 
 normaliseF=1; 
 vararginoptions(varargin,{'F0','G0','threshold','maxIter','normaliseF'}); 
+
+% ----------------------------------------------
+% Remove empty or NaN data columns 
+a = sum(abs(X)); 
+numvox = length(a); 
+goodIndx = ~isnan(a) & a>0; 
+X=X(:,goodIndx); 
+if (~isempty(G0))
+    G0=G0(goodIndx,:); 
+end; 
+
+% ----------------------------------------------
+% Set the starting values 
 if (isempty(F0) && isempty(G0))
     g=kmeans(X',k); 
     G0 = indicatorMatrix('identity',g); 
@@ -27,17 +40,18 @@ else
     error('F0 setting not supported yet'); 
 end;
 
-% Initialization 
+% ----------------------------------------------
+% Initialize computation 
 n=1;
 df = inf; 
 Err(n)=sum(sum((X-X*W*G').^2)); 
-
-% Initialize computation 
 A  = single(X'*X); 
 Ap = (abs(A)+A)/2; 
 Am = (abs(A)-A)/2; 
 clear A; 
 
+% ----------------------------------------------
+% Iterate computation 
 while df>threshold && n<maxIter 
     ApW = Ap*W; 
     AmW = Am*W; 
@@ -56,13 +70,20 @@ while df>threshold && n<maxIter
 end; 
 fprintf('.\n'); 
 
+% ----------------------------------------------
+% Calculate and normalize F
 F=X*W; 
-
 if (normaliseF) 
     f=sqrt(sum(F.^2)); % Factor for normalisation 
     F=bsxfun(@times,F,1./f); 
     G=bsxfun(@times,G,f);  % Normalise the group factor the other way
 end; 
+
+% ----------------------------------------------
+% Reinsert the missing rows
+Gs = G; 
+G  = zeros(numvox,k);
+G(goodIndx)=Gs; 
 
 Info.numiter = n;  
 Info.error=Err(end); 

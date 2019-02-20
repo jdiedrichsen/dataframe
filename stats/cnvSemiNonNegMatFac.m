@@ -83,7 +83,7 @@ end;
 % Reinsert the missing rows
 Gs = G; 
 G  = zeros(numvox,k);
-G(goodIndx)=Gs; 
+G(goodIndx,:)=Gs; 
 
 Info.numiter = n;  
 Info.error=Err(end); 

@@ -40,7 +40,7 @@ while c<=length(options)
     end;
     if ~isempty(a)
         assignin('caller',options{c},1);
-        c=c+1;
+        c=c+2;%c+1;
     else
         if checkvars
             a=strmatch(options{c},allowed_vars);

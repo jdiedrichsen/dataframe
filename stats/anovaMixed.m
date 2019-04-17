@@ -1,15 +1,15 @@
-function results=anovaMixed(data,subjects,varargin); 
-% results=anovaMixed(data,subjects,varargin); 
-% Carry out an a Mixed (within / between) factor anova. 
-% Only for balanced designs 
+function results=anovaMixed(data,subjects,varargin);
+% results=anovaMixed(data,subjects,varargin);
+% Carry out an a Mixed (within / between) factor anova.
+% Only for balanced designs
 %
-% INPUT: 
+% INPUT:
 %        The way I construct the input data are similar to SPSS. Assuming
 %        you have a dataset that works in SPSS anova, just stacking all
 %        columns into a single column to form the data vector. What you need
 %        to do is just group the within-subject factors and between-subject
-%        factors separately. 
-%        All inputs must have the same length (N=number of observations) 
+%        factors separately.
+%        All inputs must have the same length (N=number of observations)
 %
 %        data: data vector for anova, each value is one observation.
 %              Size: Nx1
@@ -17,18 +17,18 @@ function results=anovaMixed(data,subjects,varargin);
 %        subjects: numerical vector, can be the subject id, corresponds to
 %                  each value in data. size(subjects)=Nx1
 %
-% VARAGINS: 
+% VARAGINS:
 %       'within',wtFactors,wtFactorNames
 %            wtFactors: within-subject factors. size(wtFactors)= NxQ
 %            wtFactorNames: cell array. each cell contains the Q name of the
 %                       correspondent within-subject factor. For output
 %                       purpose only.
-%        'between',btFactors,btFactorNames 
-%            btFactors: between subject factor. size(btFactors)= NxP 
+%        'between',btFactors,btFactorNames
+%            btFactors: between subject factor. size(btFactors)= NxP
 %            btFactorNames: cell array. each cell contains the P name of the
 %                   correspondent between-subject factor. For output
 %                   purpose only.
-%        'intercept',0/1: Add or exclude intercept to the ANOVA table 
+%        'intercept',0/1: Add or exclude intercept to the ANOVA table
 %        'subset', i: Includes only data for which i>0
 % Output: Structure with varies information. Feel free to extract information you want.
 %
@@ -36,112 +36,112 @@ function results=anovaMixed(data,subjects,varargin);
 %
 % Original Author: Zheng Hui (zhenghui.zhh@gmail.com)
 % Thanks to Joshua Goh for the GLM codes. http://j-rand.blogspot.com/
-% 
+%
 % Modifications, minor fixes, and wrapper for flexible input argument handling
-% by Joern Diedrichsen, 2012 (j.diedrichsen@ucl.ac.uk) 
-% and Alexandra Reichenbach (a.reichenbach@ucl.ac.uk). 
-% Version 2: 
-%   - Intercept added 
-%   - Compression of data with tapply added 
+% by Joern Diedrichsen, 2012 (j.diedrichsen@ucl.ac.uk)
+% and Alexandra Reichenbach (a.reichenbach@ucl.ac.uk).
+% Version 2:
+%   - Intercept added
+%   - Compression of data with tapply added
 %   - removed bug that gives wrong results when variable start with the
-%           same word 
+%           same word
 
 wtFactors=[];
 wtFactorNames={};
 btFactors=[];
 btFactorNames={};
-subset=[]; 
-verbose=1; 
-intercept=0;                % Include intercept as an explit factor?? 
+subset=[];
+verbose=1;
+intercept=0;                % Include intercept as an explit factor??
 
-% Parse Varargin: 
-c=1; 
-numargs=length(varargin); 
+% Parse Varargin:
+c=1;
+numargs=length(varargin);
 while (c<numargs)
-    switch(varargin{c}) 
+    switch(varargin{c})
         case 'within'
             if (numargs<c+2)
-                error('Provide both factor and factor names for within factors'); 
-            end; 
-            wtFactors=varargin{c+1}; 
+                error('Provide both factor and factor names for within factors');
+            end;
+            wtFactors=varargin{c+1};
             wtFactorNames=varargin{c+2};
-            if (size(wtFactors,2)~=length(wtFactorNames)) 
-                error('Provide as many factor names as variables for within'); 
-            end; 
-            c=c+3; 
+            if (size(wtFactors,2)~=length(wtFactorNames))
+                error('Provide as many factor names as variables for within');
+            end;
+            c=c+3;
         case 'between'
             if (numargs<c+2)
-                error('Provide both factor and factor names for between factors'); 
-            end; 
-            btFactors=varargin{c+1}; 
-            btFactorNames=varargin{c+2}; 
-            if (size(btFactors,2)~=length(btFactorNames)) 
-                error('Provide as many factor names as variables for between'); 
-            end; 
-
-            c=c+3; 
+                error('Provide both factor and factor names for between factors');
+            end;
+            btFactors=varargin{c+1};
+            btFactorNames=varargin{c+2};
+            if (size(btFactors,2)~=length(btFactorNames))
+                error('Provide as many factor names as variables for between');
+            end;
+            
+            c=c+3;
         case 'subset'
-           subset=varargin{c+1}; 
-           c=c+2; 
+            subset=varargin{c+1};
+            c=c+2;
         case 'verbose'
-           verbose=varargin{c+1}; 
-           c=c+2; 
+            verbose=varargin{c+1};
+            c=c+2;
         case 'intercept'
-           intercept=varargin{c+1}; 
-           c=c+2; 
+            intercept=varargin{c+1};
+            c=c+2;
         otherwise
             if (ischar(varargin{c}))
                 error(sprintf('unknown option: %s',varargin{1}));
-            else 
+            else
                 error(sprintf('option string required as %d. input argument',c+2));
-            end; 
-    end; 
-end; 
+            end;
+    end;
+end;
 
-% Check if all the sizes are consistent 
-sizes=[size(data,1) size(wtFactors,1) size(btFactors,1)]; 
+% Check if all the sizes are consistent
+sizes=[size(data,1) size(wtFactors,1) size(btFactors,1)];
 sizes(sizes==0)=[];
 if (sum(abs(sizes-mean(sizes)))>0)
-    error('data and factors must have the same number of rows'); 
-end; 
+    error('data and factors must have the same number of rows');
+end;
 
 
 if (~isempty(subset))
     if size(subset,1)~=size(data,1)
-        error('subset must be Nx1 vector or logicals'); 
-    end; 
-    data=data(subset,:);   
-    subjects=subjects(subset,:);   
+        error('subset must be Nx1 vector or logicals');
+    end;
+    data=data(subset,:);
+    subjects=subjects(subset,:);
     
     if (~isempty(wtFactors))
         wtFactors=wtFactors(subset,:);
-    end; 
+    end;
     if (~isempty(btFactors))
         btFactors=btFactors(subset,:);
-    end; 
-end; 
+    end;
+end;
 
-% Check if the variable names are all unique 
-names={wtFactorNames{:} btFactorNames{:}}; 
-for i=1:length(names) 
+% Check if the variable names are all unique
+names={wtFactorNames{:} btFactorNames{:}};
+for i=1:length(names)
     for j=i+1:length(names)
-        if ~isempty(strfind(names{i},names{j})); 
-            error(sprintf('Variable name "%s" is contained in variable name "%s", please make unique!',names{j},names{i})); 
-        end; 
-        if ~isempty(strfind(names{j},names{i})); 
-            error(sprintf('Variable name "%s" is contained in variable name "%s", please make unique!',names{i},names{j})); 
-        end; 
+        if ~isempty(strfind(names{i},names{j}));
+            error(sprintf('Variable name "%s" is contained in variable name "%s", please make unique!',names{j},names{i}));
+        end;
+        if ~isempty(strfind(names{j},names{i}));
+            error(sprintf('Variable name "%s" is contained in variable name "%s", please make unique!',names{i},names{j}));
+        end;
         
     end;
-end; 
+end;
 
 
-% Condense the data to make sure that there is only one observation 
-% Per subject per factor 
-[data,R]=pivottable([wtFactors btFactors subjects],[],data,'mean'); 
-wtFactors=R(:,1:size(wtFactors,2)); 
-btFactors=R(:,size(wtFactors,2)+1:(size(wtFactors,2)+size(btFactors,2))); 
-subjects=R(:,end); 
+% Condense the data to make sure that there is only one observation
+% Per subject per factor
+[data,R]=pivottable([wtFactors btFactors subjects],[],data,'mean');
+wtFactors=R(:,1:size(wtFactors,2));
+btFactors=R(:,size(wtFactors,2)+1:(size(wtFactors,2)+size(btFactors,2)));
+subjects=R(:,end);
 
 
 wtFactors=convertFactors(wtFactors);
@@ -194,26 +194,31 @@ end
 
 
 %Calling glm for anova----------------
-if (intercept==1)   % intercept explicit 
+if (intercept==1)   % intercept explicit
     xmatI.p=ones(size(data,1),1);
     xmat=[xmatI xmatWt xmatWtXBt xmatBt];
     pname=[{'intercept'} pnameWt pnameWtXBt pnameBt];
-else     
+else
     xmat=[xmatWt xmatWtXBt xmatBt];
     pname=[pnameWt pnameWtXBt pnameBt];
-end; 
+end;
 results=callGLMForAnova(data,pname,xmat,pnameErr,xmatErr,subjects,intercept);
 
-% Now do printout of ANOVA: 
+% Now do printout of ANOVA:
 if (verbose)
-   % fprintf('reach/att x own/distr x exp (for tj & nb distr==4):\n');
-        fprintf('%12s  %6s  %6s  %3s  %3s\n','Name','p','F','df1','df2'); 
-        fprintf('-------------------------------------------------\n');
-
-   for i=1:size(results.eff,2)
+    % add space
+    fprintf(1,'\n');
+    
+    % fprintf('reach/att x own/distr x exp (for tj & nb distr==4):\n');
+    fprintf('%12s  %6s  %6s  %3s  %3s\n','Name','p','F','df1','df2');
+    fprintf('-------------------------------------------------\n');
+    
+    for i=1:size(results.eff,2)
         fprintf('%12s  %6.4f  %6.3f  %3.0d  %3.0d\n',results.eff(1,i).Name,results.eff(1,i).p,results.eff(1,i).F,results.eff(1,i).DF,results.eff(1,i).errDF);
-   end 
-end; 
+    end
+    % add space
+    fprintf(1,'\n');
+end;
 
 
 %-----------------------end of main function-------------------------------
@@ -225,7 +230,7 @@ function results=callGLMForAnova(data,pname,xmat,pnameErr,xmatErr,subjects,inter
 nbSubj=size(subjects{1},2)+1;
 
 R = stats_glm_anova(pname,xmat,data,intercept);
-RE = stats_glm_anova(pnameErr,xmatErr,R.full.Residual,0);   % For error term, make intercept implicit 
+RE = stats_glm_anova(pnameErr,xmatErr,R.full.Residual,0);   % For error term, make intercept implicit
 
 %Computing stats-----------------------
 DFTO=0;
@@ -241,16 +246,16 @@ for i=1:nbEff
     DFTO=DFTO+stats(i).DF;
 end
 
-%create error terms for the within-error 
+%create error terms for the within-error
 nbErr=length(xmatErr);
-errTerms=[]; 
+errTerms=[];
 for i=nbErr:-1:1
     errTerms(i).Name=pnameErr{i};
     errTerms(i).X=xmatErr(i).p;
     errTerms(i).SSE=RE.red(i).SSE-RE.full.SSE;
     effUsingThisErr=[];
     for j=1:nbEff
-        if (isempty(stats(j).errName) & ~isempty(strfind(stats(j).Name,errTerms(i).Name(1:end-3))))  % Bug fix: was strfind 
+        if (isempty(stats(j).errName) & ~isempty(strfind(stats(j).Name,errTerms(i).Name(1:end-3))))  % Bug fix: was strfind
             effUsingThisErr(end+1)=j;
             stats(j).errName=errTerms(i).Name;
             stats(j).errSSE=errTerms(i).SSE;
@@ -265,7 +270,7 @@ for i=nbErr:-1:1
     end
 end
 
-% For all fixed effects, using residual error 
+% For all fixed effects, using residual error
 errTerms(end+1).DF=size(data,1)-(1-intercept)-DFTO;
 errTerms(end).SSE=RE.full.SSE;
 errTerms(end).MSE=errTerms(end).SSE./errTerms(end).DF;
@@ -444,9 +449,9 @@ function [s] = stats_glm_matrix(x,y,intercept)
 n=size(y,1);           % Change from original: this fixes problem
 npred=size(x,2);
 
-if (intercept==0)    % Only add when intercept implict 
+if (intercept==0)    % Only add when intercept implict
     x=[ones(n,1) x]; % Add one column of constants
-end; 
+end;
 
 b=inv(x'*x)*x'*y; % Betas
 
@@ -455,11 +460,11 @@ b=inv(x'*x)*x'*y; % Betas
 %--------------------------------------------------------------------------
 j=ones(size(y,1),size(y,1)); % Create J matrix
 
-if (intercept==0) 
-    SSTO=(y'*y)-(1/n)*y'*j*y;  % Account for intercept explicitly 
-else 
-    SSTO=(y'*y);               % Leave Intercept in 
-end; 
+if (intercept==0)
+    SSTO=(y'*y)-(1/n)*y'*j*y;  % Account for intercept explicitly
+else
+    SSTO=(y'*y);               % Leave Intercept in
+end;
 SSE=(y'*y)-(b'*x'*y);
 SSTO=diag(SSTO);
 SSE=diag(SSE);

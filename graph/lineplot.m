@@ -96,7 +96,7 @@ F.errorbars='plusminus';
 F.transp=0.3;
 F.errorcap=[]; 
 
-gap=[1 0.7 0.5 0.5];
+F.gap=[1 .7 .22 0]; %[1 0.7 0.5 0.5];
 leg=[];
 catcol=[]; 
 xcat=[];
@@ -319,7 +319,7 @@ else
     for c=2:numxcat
         for gv=1:numxvars
             if(C(c,gv)~=C(c-1,gv))
-                x_coord(c,1)=x_coord(c-1)+gap(gv);
+                x_coord(c,1)=x_coord(c-1)+F.gap(gv);
                 if (gv~=numxvars)
                     l_to(end+1)=c-1;
                     l_from(end+1)=c;

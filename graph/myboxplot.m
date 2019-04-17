@@ -285,17 +285,17 @@ for c=1:num_cat
 end;
 
 % Place multi-line text approximately where tick labels belong
-if (~F.xtickoff)
-    for j=1:num_cat
-        if (~F.flip)
-            ht = text(x_coord(j),ylim(1),glabels{j,1},'HorizontalAlignment','center',...
-                'VerticalAlignment','top', 'UserData','xtick');
-        else
-              ht = text(xlim(1),x_coord(j),glabels{j,1},'HorizontalAlignment','center',...
-                  'VerticalAlignment','top', 'UserData','ytick');
-        end;
-    end
-end
+% if (~F.xtickoff)
+%     for j=1:num_cat
+%         if (~F.flip)
+%             ht = text(x_coord(j),ylim(1),glabels{j,1},'HorizontalAlignment','center',...
+%                 'VerticalAlignment','top', 'UserData','xtick');
+%         else
+%             ht = text(xlim(1),x_coord(j),glabels{j,1},'HorizontalAlignment','center',...
+%                 'VerticalAlignment','top', 'UserData','ytick');
+%         end;
+%     end
+% end
 
 % Add legend if necessary
 if (~isempty(split))

@@ -7,7 +7,7 @@ threshold = 0.001;
 maxIter = 5000; 
 vararginoptions(varargin,{'G0','threshold','maxIter'}); 
 if (isempty(G0))
-    g=kmeans(X,k); 
+    g=kmeans(X',k); 
     G0 = indicatorMatrix('identity',g); 
 end; 
 df = inf; 

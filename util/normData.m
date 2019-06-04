@@ -8,8 +8,8 @@ function [varargout] = normData(D, dataFields, varargin)
 % subject number field 'SN' (or 'sn') and a field/fields specified by the
 % input 'dataFields' (e.g. {'MT'} for movement times).
 %
-% This function is useful in order to plot data with within-subject standard error
-% of the mean as errorbars.
+% This function is useful in order to plot data with normalized
+% between-subject standard error of the mean as errorbars.
 %
 % Inputs
 %   D           : dataframe structure with fields 'SN' and 'dataFields' (minimum requirements)

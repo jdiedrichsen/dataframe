@@ -419,12 +419,6 @@ for c=1:numsplitcat
 end;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Do legend
-if (~isempty(split))
-    plotlegend(h,leg,R,split_conv,leglocation);
-end;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Error bars
 if (~isempty(errorfcn))
     for c = 1:numsplitcat
@@ -552,6 +546,12 @@ if (xcat_exist)
 		text(mean(x_coord),posY(1)-0.75*shift,labels_str(nlabels));
 	end
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do legend
+if (~isempty(split))
+    plotlegend(h,leg,R,split_conv,leglocation);
+end;
 
 figure(gcf);    % Bring figure to front on Mac platform
 

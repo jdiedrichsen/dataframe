@@ -43,10 +43,18 @@ pivotfcn = 'nansum';
 rowlabel = [];
 columnlabel = [];
 columnlabelrotation = 90;
-vararginoptions(varargin, {'subset','facecolor','gapwidth','edgecolor','pivotfcn','rowlabel','columnlabel','columnlabelrotation'});
+linewidth = 1;
+drawcount = 1;
+fontsize = get(0,'defaulttextfontsize');
+textcolor = [0,0,0];
+leg = [];
+leglocation = 'northoutside';
+vararginoptions(varargin, {'subset','facecolor','gapwidth',...
+    'edgecolor','pivotfcn','rowlabel','columnlabel','columnlabelrotation','linewidth',...
+    'drawcount','fontsize','textcolor','leg','leglocation'});
 
 % use pivottable 
-M = pivottable(row, col, data, pivotfcn, 'subset', subset);
+[M,Rheader,Cheader] = pivottable(row, col, data, pivotfcn, 'subset', subset);
 M(isnan(M)) = 0;
 [Nrow,Ncol] = size(M);
 
@@ -55,6 +63,7 @@ M(isnan(M)) = 0;
 totals = sum(M,1);
 total = sum(totals);
 xprev = gapwidth(2);
+xrange = [0,0];
 for c=1:Ncol    
     if totals(c)<=eps
         warning('No data counts for category %d', c);
@@ -79,11 +88,21 @@ for c=1:Ncol
             y = [0, 0, height, height] + yprev;
             if c==1 % for the first column
                 ycenter(r) = mean(y(2:3));
+                xrange(1) = x(1);
             end
                         
             % draw patch
             h = patch(x,y,color); hold on;
-            set(h, 'edgecolor', edgecolor);
+            set(h, 'edgecolor', edgecolor, 'linewidth', linewidth);
+            
+            % draw count if required
+            if drawcount&&M(r,c)>1
+                text(mean(x),mean(y),sprintf('%d',M(r,c)),...
+                    'horizontalalignment','center',...
+                    'verticalalignment','middle',...
+                    'fontsize',fontsize,...
+                    'color',textcolor);
+            end
             
             yprev = y(3) + gapwidth(1);
         end
@@ -91,40 +110,61 @@ for c=1:Ncol
     
     xprev = x(2)+gapwidth(2); 
 end;
+xrange(2)=x(2);
 axis off;
 set(gca, 'xlim', [-10*gapwidth(2), max(x)],...
     'ylim', [-5*gapwidth(1), max(y)]);
 
-% draw label
-if isempty(rowlabel)
+% draw label if specified
+if ~isempty(rowlabel)
+    %     for r=1:Nrow
+    %         rowlabel{r} = sprintf('row%d',r);
+    %     end
     for r=1:Nrow
-        rowlabel{r} = sprintf('row%d',r);
+        text(0, ycenter(r), rowlabel{r},...
+            'horizontalalignment', 'right', ...
+            'rotation', 0,...
+            'color', facecolor{r});
     end
 end
-if isempty(columnlabel)
+if ~isempty(columnlabel)
+    %     for c=1:Ncol
+    %         columnlabel{c} = sprintf('col%d',c);
+    %     end
+    switch columnlabelrotation
+        case 90
+            halign = 'right';
+            valign = 'middle';
+        otherwise
+            halign = 'center';
+            valign = 'top';
+    end
     for c=1:Ncol
-        columnlabel{c} = sprintf('col%d',c);
+        text(xcenter(c), 0, columnlabel{c},...
+            'horizontalalignment', halign, ...
+            'verticalalignment', valign, ...
+            'rotation', columnlabelrotation);
     end
-end
-switch columnlabelrotation
-    case 90
-        halign = 'right';
-        valign = 'middle';
-    otherwise
-        halign = 'center';
-        valign = 'top';
-end
-for c=1:Ncol
-    text(xcenter(c), 0, columnlabel{c},...
-        'horizontalalignment', halign, ...
-        'verticalalignment', valign, ...
-        'rotation', columnlabelrotation);
-end
-for r=1:Nrow
-    text(0, ycenter(r), rowlabel{r},...
-        'horizontalalignment', 'right', ...
-        'rotation', 0,...
-		'color', facecolor{r});
 end
 
+% add legend if required
+if ~isempty(leg);
+    if ~isempty(strfind(leglocation,'north'))||~isempty(strfind(leglocation,'south'))
+        orientation = 'horizontal';
+    else
+        orientation = 'vertical';
+    end
+    legend(leg,'location',leglocation,...
+        'edgecolor','none',...
+        'color', get(gcf,'color'),...
+        'orientation',orientation);
+    tmp = get(gcf,'children');
+    for i=1%:length(tmp)
+        if isa(tmp(i), 'matlab.graphics.illustration.Legend');
+            set(tmp(i), 'textcolor', get(gca,'xcolor'));
+        end
+    end
+end
+
+varargout = {M,Rheader,Cheader,xcenter,xrange};
 end

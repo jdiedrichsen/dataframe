@@ -110,7 +110,6 @@ end;
 goodindx=find(subset);
 y=y(goodindx,:);
 x=x(goodindx,:);
-z=z(goodindx,:);
 if (~isempty(split))
     split=split(goodindx,:);
 end;

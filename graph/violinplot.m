@@ -61,7 +61,7 @@ F.linewidth=1;
 F.meancolor=[0 0 0];
 F.mediancolor=[0 0 0];
 flip=0;
-barwidth=1;
+barwidth=0.8;
 gapwidth=[0.5 0 0 0];
 leg=[];
 leglocation='NorthWest';
@@ -162,7 +162,7 @@ for n=1:N
     
     if ~all(isnan(P{n,2}));
         [f,xi]      = ksdensity(P{n,2}(~isnan(P{n,2}))); % TODO: implement 'npoints','bandwidth' options
-        Dens{n,1}   = f;
+        Dens{n,1}   = f/max(f);
         Dens{n,2}   = xi;
         ymin        = min([ymin,min(xi)]);
         ymax        = max([ymax,max(xi)]);
@@ -198,7 +198,7 @@ end;
 % Calculate scale 
 xmin    = min(x_coord);
 xmax    = max(x_coord);
-dx      = (xmax-xmin)/(3*length(x_coord));
+dx      = (xmax-xmin)/(3*length(x_coord)); if dx==0; dx=0.1; end;
 xlims   = [(xmin-0.3-barwidth/2) (xmax+0.3+barwidth/2)];
 % ymin    = min(min(PLOT),0);
 % ymax    = max(max(PLOT),0);
@@ -244,7 +244,7 @@ end
 form=fieldnames(F); 
 for i=1:length(x_coord)
     if (~isempty(Dens{i,1}))
-        XX=dx*[Dens{i,1},-Dens{i,1}(end:-1:1)]+x_coord(i);
+        XX=barwidth/2*[Dens{i,1},-Dens{i,1}(end:-1:1)]+x_coord(i); % scale to fit in
         YY=[Dens{i,2},Dens{i,2}(end:-1:1)];
         fm=F;
         for f=1:length(form)
@@ -276,11 +276,11 @@ for i=1:length(x_coord)
         % show mean and median
         K = Dens{i,2}; D = Dens{i,1};
         [~,idx] = min(abs(K-MEAN(i)));
-        drawline(MEAN(i),'dir','horz','lim',x_coord(i)+[-D(idx),D(idx)]*dx,...
+        drawline(MEAN(i),'dir','horz','lim',x_coord(i)+[-D(idx),D(idx)]*barwidth/2,...
             'color',F.meancolor,'linewidth',F.linewidth);
         
         [~,idx] = min(abs(K-MEDIAN(i)));
-        drawline(MEDIAN(i),'dir','horz','lim',x_coord(i)+[-D(idx),D(idx)]*dx,...
+        drawline(MEDIAN(i),'dir','horz','lim',x_coord(i)+[-D(idx),D(idx)]*barwidth/2,...
             'color',F.mediancolor,'linewidth',F.linewidth);
     end
 end;

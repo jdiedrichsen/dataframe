@@ -114,6 +114,9 @@ z=z(goodindx,:);
 if (~isempty(split))
     split=split(goodindx,:);
 end;
+if(isempty(goodindx))
+    return; 
+end; 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % color and bubble size 

@@ -368,7 +368,7 @@ end;
 set(gca,'Box','off');
 if ~flip
     if ~(ylims(2)==ylims(1))
-        axis([xlims ylims]);
+        set(gca,'XLim',xlims,'YLim',ylims); 
     end;
     set(gca,'XTick',x_coord);
     set(gca,'YLabel',text(0,0,'Values'));

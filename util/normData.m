@@ -60,8 +60,10 @@ for idf = 1:numel(dataFields)
     elseif nargin == 2
         % use default option (subtraction)
         normOption = 'sub';
+    elseif nargin < 2
+        error('Not enough input arguments!');
     else
-        error('Not enough (or too many) input arguments!');
+        error('Too many input arguments!');
     end
     
     % apply the chosen norm option

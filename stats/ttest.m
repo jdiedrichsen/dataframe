@@ -67,7 +67,8 @@ switch (kind)
         end;
         if (nargout==0)
             fprintf('Mean: %2.3f (%2.3f)\n',nanmean(groupA(indx)),nanstd(groupA(indx))/sqrt(N));
-            fprintf('t(%i) = %2.3f  p = %2.5f\n',df,t,p);
+            %fprintf('t(%i) = %2.3f  p = %2.10f\n\n',df,t,p);
+            fprintf('t(%i) = %2.3f  p = %3.3d\n\n',df,t,p);
         end;
 end;
 % add space

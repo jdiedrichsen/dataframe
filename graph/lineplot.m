@@ -375,7 +375,7 @@ if ~flip
     %if (isempty(g)), set(gca,'XLabel',text(0,0,'Column Number')); end
 else
     axis([ylims xlims]);
-    set(gca,'YTick',lb);
+    set(gca,'YTick',x_coord);
     set(gca,'XLabel',text(0,0,'Values'));
     %if (isempty(g)), set(gca,'YLabel',text(0,0,'Column Number')); end
 end

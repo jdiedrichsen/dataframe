@@ -87,7 +87,8 @@ while(c<=length(varargin))
     case {'xtickoff'}
         F.xtickoff=1;c=c+1;
     case {'flip'}
-        F.flip=1;c=c+1;
+        %F.flip=1;c=c+1;
+        F.flip=varargin{c+1}; c=c+2;
     case {'boxwidth','outliersymbol','whiskerlength','whiskerwidth','linecolor','linewidth',...
                 'fillcolor','mediancolor','medianwidth','notch','markersize','markertype',...
                 'markercolor','markerfill','plotall'};
@@ -240,7 +241,7 @@ dy = (ymax-ymin)/20;
 ylims = [(ymin-dy) (ymax+dy)];
 
 % Scale axis for vertical or horizontal boxes.
-cla
+%cla
 set(gca,'NextPlot','add','Box','off');
 if ~F.flip
     axis([xlims ylims]);

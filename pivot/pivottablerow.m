@@ -59,7 +59,16 @@ A=pidata([R],f); % get the columns-oriented version
 RA=[];FA=[];
 for r=1:numCat
     RA=[RA;A{r,1}];
-    FA=[FA;fcneval(fieldcommand,A{r,2})];
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % GA: Nan padding in case of missing data
+    temp = fcneval(fieldcommand,A{r,2});
+    if ~isempty(FA) && size(temp,2)~=size(FA,2)
+        FA=[FA;[temp, nan(1, size(FA,2)-size(temp,2))]];
+    else
+        FA=[FA;fcneval(fieldcommand,A{r,2})];
+    end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %FA=[FA;fcneval(fieldcommand,A{r,2})];
 end;
 
 % now sort the entries

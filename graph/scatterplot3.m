@@ -176,6 +176,15 @@ else
     D=pidata(split,[x y z]);
 end;
 [numsplitcat,dummy]=size(D);
+
+%%%%%%%%%%%%%%% GA
+splitvec = zeros(numel(split),1);
+splitcat = unique(split);
+for icat=1:numsplitcat
+    splitvec(split==splitcat(icat))=icat;
+end
+%%%%%%%%%%%%%%%
+
 for c=1:numsplitcat
     fm=F;
     for f=1:length(form)
@@ -225,13 +234,13 @@ if (~isempty(label))
         label={label{find(subset)}};
         for i=1:length(x)
             th=text(x(i)+xoffset,y(i)+yoffset,z(i)+zoffset,label{i});
-            set(th,'Color',labelcolor,'FontSize',labelsize,'FontName',labelfont); 
+            set(th,'Color',labelcolor{splitvec(i)},'FontSize',labelsize,'FontName',labelfont); 
         end;
     else
         label=label(find(subset));
         for i=1:length(x)
             th=text(x(i)+xoffset,y(i)+yoffset,z(i)+zoffset,sprintf(labelformat,label(i)));
-            set(th,'Color',labelcolor,'FontSize',labelsize,'FontName',labelfont); 
+            set(th,'Color',labelcolor{splitvec(i)},'FontSize',labelsize,'FontName',labelfont); 
         end;
     end;
 end;

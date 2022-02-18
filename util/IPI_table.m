@@ -24,7 +24,6 @@ function [S] = IPI_table(D, varargin)
 %               this will also create a new field 'isRT' to distinguish
 %               between IPIs that are RT (1) or not (0). Comes in handy for
 %               plotting purposes
-%                 (e.g. 'normMT', 'normRT', etc.) that contain the newly normalized data
 %
 % Usage example : D2 = IPI_table(D1, 'addRT', 1);
 %

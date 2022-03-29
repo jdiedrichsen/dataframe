@@ -9,7 +9,7 @@ function save_figs(varargin)
 %   varargin    : optional input variables
 %
 %
-% Usage example : save_figs('whichf','all', 'format','pdf', 'res','-r600');
+% Usage example : save_figs('whichf','all', 'width',17.6, 'height',20, 'unit','centimeters', 'format','pdf', 'res','-r600');
 %
 % -- Latest updates
 % v1.0: gariani@uwo.ca - 2022.03.28: function created
@@ -36,7 +36,6 @@ g = groot;
 if isempty(g.Children) % there are no open figures
     % ask which figure to produce
     call = input('No open figures. Call function to create figures (e.g., D=wmp2_analyze(''RT_diff'');): ', 's');
-    warning('This case will be called with the default options!')
     eval(sprintf('%s', call))
 end
 

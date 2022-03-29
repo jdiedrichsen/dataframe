@@ -9,12 +9,12 @@ function save_figs(varargin)
 %   varargin    : optional input variables
 %
 %
-% Usage example : save_figs('whichf','all', 'width',17.6, 'height',20, 'unit','centimeters', 'format','pdf', 'res','-r600');
+% Usage example : save_figs('pathtosave','../../../docs', 'whichf','all', 'width',17.6, 'height',20, 'units','centimeters', 'format','pdf', 'res','-r600');
 %
 % -- Latest updates
 % v1.0: gariani@uwo.ca - 2022.03.28: function created
 % --------------------------------------------------------------------------------------------------
-pathToSaveFig = cd; % save figures in current directory if no save path is given
+pathtosave = cd; % save figures in current directory if no save path is given
 whichf = 'last'; % 'last'=current figure, 'all'=every open figure, or figure numer, e.g., whichf = 2
 format = 'pdf'; % 'pdf', 'svg', 'png', 'jpeg', 'tiff', 'epsc'
 resize = '-bestfit'; % '-bestfit', '-fillpage'
@@ -28,7 +28,7 @@ lwa = 1; % AxesLineWidth
 fs = 10; % Fontsize
 fsl = 14; % FontSize legend and labels
 axsty = 'normal'; % 'normal', 'equal', 'square', 'image' % axes ratio
-vararginoptions(varargin, {'pathToSaveFig', 'whichf', 'format', 'resize', 'res', ...
+vararginoptions(varargin, {'pathtosave', 'whichf', 'format', 'resize', 'res', ...
     'width', 'height', 'ms', 'lw', 'lwa', 'fs', 'fsl', 'axsty', 'units'});
 
 % check if there are open figures, or open one
@@ -91,7 +91,7 @@ switch whichf
         % ask how to name the figure when saving it
         fname = input('Provide figure name (without extension): ', 's');
         if isempty(fname); warning('No name provided! Default given.'); fname='no_name'; end
-        savename = fullfile(pathToSaveFig, sprintf('%s', fname));
+        savename = fullfile(pathtosave, sprintf('%s', fname));
         
         % print out (save) the figure to file
         print(f, savename, sprintf('-d%s',format), resize, res);
@@ -137,7 +137,7 @@ switch whichf
         % ask how to name the figure when saving it
         fname = input('Provide figure name (without extension): ', 's');
         if isempty(fname); warning('No name provided! Default given.'); fname='no_name'; end
-        savename = fullfile(pathToSaveFig, sprintf('%s', fname));
+        savename = fullfile(pathtosave, sprintf('%s', fname));
         
         % print out (save) the figure to file
         print(f, savename, sprintf('-d%s',format), resize, res);
@@ -184,7 +184,7 @@ switch whichf
             % ask how to name the figure when saving it
             fname = input('Provide figure name (without extension): ', 's');
             if isempty(fname); warning('No name provided! Default given.'); fname='no_name'; end
-            savename = fullfile(pathToSaveFig, sprintf('%s', fname));
+            savename = fullfile(pathtosave, sprintf('%s', fname));
             
             % print out (save) the figure to file
             print(f, savename, sprintf('-d%s',format), resize, res);

@@ -18,18 +18,20 @@ pathtosave = cd; % save figures in current directory if no save path is given
 whichf = 'last'; % 'last'=current figure, 'all'=every open figure, or figure numer, e.g., whichf = 2
 format = 'pdf'; % 'pdf', 'svg', 'png', 'jpeg', 'tiff', 'epsc'
 resize = '-bestfit'; % '-bestfit', '-fillpage'
-res = '-r300'; % '-r300', '-r600' % DPI
+res = '-r0'; % '-r300', '-r600' % DPI; -r0 ensures that the output res is the same as display res
 width = 11.6; % Width of figure, depends on units
 height = 11.6; % Height of figure, depends on units
 units = 'centimeters'; % 'centimeters', 'inches', 'normalized', 'pixels', 'points'
+font = 'Helvetica'; % 'Arial', 'Helvetica', 'Courier', 'Verdana'
 ms = 6; % MarkerSize
 lw = 2; % LineWidth
 lwa = 1; % AxesLineWidth
 fs = 10; % Fontsize
 fsl = 14; % FontSize legend and labels
 axsty = 'normal'; % 'normal', 'equal', 'square', 'image' % axes ratio
+paperposmode = 'auto'; % 'auto', 'manual'
 vararginoptions(varargin, {'pathtosave', 'whichf', 'format', 'resize', 'res', ...
-    'width', 'height', 'ms', 'lw', 'lwa', 'fs', 'fsl', 'axsty', 'units'});
+    'width', 'height', 'ms', 'lw', 'lwa', 'fs', 'fsl', 'axsty', 'units', 'font'});
 
 % check if there are open figures, or open one
 g = groot;
@@ -94,7 +96,12 @@ switch whichf
         savename = fullfile(pathtosave, sprintf('%s', fname));
         
         % print out (save) the figure to file
-        print(f, savename, sprintf('-d%s',format), resize, res);
+        if any(strcmp(format, {'pdf','ps'}))
+            % resize option only for PDF and PS
+            print(f, savename, sprintf('-d%s',format), resize, res);
+        else
+            print(f, savename, sprintf('-d%s',format), res);
+        end
     case 'last'
         % find figures before setting final figure properties
         f = gcf;
@@ -124,7 +131,7 @@ switch whichf
                 set(a, 'LineWidth',lwa);
                 
                 % adjust font size for axes, legend, and ticks
-                set(a, 'FontSize',fs);
+                set(a, 'FontName',font, 'FontSize',fs);
                 set(a.Title, 'FontSize',fsl);
                 set(a.XLabel, 'FontSize',fsl);
                 set(a.YLabel, 'FontSize',fsl);
@@ -132,7 +139,7 @@ switch whichf
         end
         
         % set paper properties (only relevant if specific paper needs)
-        set(f, 'PaperUnits',units, 'PaperSize',[width height]);
+        set(f, 'PaperPositionMode',paperposmode, 'PaperUnits',units, 'PaperSize',[width height]);
         
         % ask how to name the figure when saving it
         fname = input('Provide figure name (without extension): ', 's');
@@ -140,7 +147,12 @@ switch whichf
         savename = fullfile(pathtosave, sprintf('%s', fname));
         
         % print out (save) the figure to file
-        print(f, savename, sprintf('-d%s',format), resize, res);
+        if any(strcmp(format, {'pdf','ps'}))
+            % resize option only for PDF and PS
+            print(f, savename, sprintf('-d%s',format), resize, res);
+        else
+            print(f, savename, sprintf('-d%s',format), res);
+        end
     case 'all'
         % find figures before setting final figure properties
         for ff = 1:numel(g.Children)
@@ -187,7 +199,12 @@ switch whichf
             savename = fullfile(pathtosave, sprintf('%s', fname));
             
             % print out (save) the figure to file
-            print(f, savename, sprintf('-d%s',format), resize, res);
+            if any(strcmp(format, {'pdf','ps'}))
+                % resize option only for PDF and PS
+                print(f, savename, sprintf('-d%s',format), resize, res);
+            else
+                print(f, savename, sprintf('-d%s',format), res);
+            end
         end
     otherwise
         error('no such case!')

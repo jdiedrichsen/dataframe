@@ -22,7 +22,7 @@ res = '-r0'; % '-r300', '-r600' % DPI; -r0 ensures that the output res is the sa
 width = 11.6; % Width of figure, depends on units
 height = 11.6; % Height of figure, depends on units
 units = 'centimeters'; % 'centimeters', 'inches', 'normalized', 'pixels', 'points'
-font = 'Helvetica'; % 'Arial', 'Helvetica', 'Courier', 'Verdana'
+font = 'Helvetica'; % 'Arial', 'Helvetica', 'Courier', 'Verdana', 'Cambria'
 ms = 6; % MarkerSize
 lw = 2; % LineWidth
 lwa = 1; % AxesLineWidth
@@ -146,7 +146,8 @@ switch whichf
                 set(a, 'LineWidth',lwa);
                 
                 % adjust font size for axes, legend, and ticks
-                set(a, 'FontName',font, 'FontSize',fs);
+                set(a, 'FontName',font, 'FontSizeMode','manual', ...
+                    'FontSize',fs, 'FontUnits','points', 'Units',units);
                 set(a.Title, 'FontSize',fsl);
                 set(a.XLabel, 'FontSize',fsl);
                 set(a.YLabel, 'FontSize',fsl);

@@ -38,6 +38,11 @@ function [x,v] = randfixedsum(n,m,s,a,b)
 % returned set equal to the hexagon's area.
 %
 % Roger Stafford - Jan. 19, 2006
+%
+% Cite As:
+% Roger Stafford (2022). Random Vectors with Fixed Sum
+% (https://www.mathworks.com/matlabcentral/fileexchange/9700-random-vectors-with-fixed-sum), MATLAB
+% Central File Exchange. Retrieved April 1, 2022. 
 
 % Check the arguments.
 if (m~=round(m))|(n~=round(n))|(m<0)|(n<1)

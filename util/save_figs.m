@@ -6,7 +6,9 @@ function save_figs(varargin)
 %
 % Inputs
 %   (optional)
-%   varargin    : optional input variables
+%   varargin    :   optional input variables
+%       whichf  :   which figure(s) to save, 'last'=current figure, 'all'=every open figure, or figure
+%                   numer, e.g., whichf = 2 
 %
 %
 % Usage example : save_figs('pathtosave','../../../docs', 'whichf','all', 'width',17.6, 'height',20, 'units','centimeters', 'format','pdf', 'res','-r600');
@@ -59,7 +61,7 @@ set(g, 'defaultFigurePaperPositionMode',paperposmode);
 % save current figure (last), a specific figure (fnum), or all open figures
 if ~ischar(whichf); fnum = num2str(whichf); else; fnum = {}; end
 switch whichf
-    case fnum
+    case fnum % looks for a specific figure number (there might be more open, will be ignored)
         % find figures before setting final figure properties
         for ff = 1:numel(g.Children)
             if g.Children(ff).Number==str2double(whichf)
@@ -117,7 +119,7 @@ switch whichf
         else
             print(f, savename, sprintf('-d%s',format), res);
         end
-    case 'last'
+    case 'last' % looks for currently selected figure (the last one brought in the foreground)
         % find figures before setting final figure properties
         f = gcf;
         
@@ -169,10 +171,18 @@ switch whichf
         else
             print(f, savename, sprintf('-d%s',format), res);
         end
-    case 'all'
+    case 'all' % loops through all open figures in the order they were created or called
         % find figures before setting final figure properties
         for ff = 1:numel(g.Children)
-            f = g.Children(ff);
+            % follow the order in which the figures were created
+            i = 1;
+            while g.Children(i).Number~=ff
+                i = i+1;
+                if i>numel(g.Children)
+                    error('Exceeded number of iterations!');
+                end
+            end
+            f = g.Children(i);
             
             % decide on final figure size (1 col, 2 cols, etc.)
             set(f, 'WindowStyle','normal', 'renderer','painters');
